@@ -171,27 +171,27 @@ void bmpPipe::drawImage(int x,int y) {
 	int			srcY;
 	rect			defRect;
 
-	if (haveInfo) {										// If we have valid bmp info..
-		bmpFile = SD.open(filePath);					// Open up the file.
-		if (bmpFile) {										// If we opened it.
-			endY = y+sourceRect.height;				// Start calculating endpoints and things.
+	if (haveInfo) {																										// If we have valid bmp info..
+		bmpFile = SD.open(filePath);																					// Open up the file.
+		if (bmpFile) {																										// If we opened it.
+			endY = y+sourceRect.height;																				// Start calculating endpoints and things.
 			srcY = sourceRect.y;
-			for (trace=y; trace<endY;trace++) {		// Ready to pull data through to the screen.
-				bmpFile.seek(filePtr(x,srcY++));		// Position the file pointer to the line of pixels we want.
-				drawLine(bmpFile,x,trace);				// Standard old pixel by pixel draw. (Least it works.)
+			for (trace=y; trace<endY;trace++) {																		// Ready to pull data through to the screen.
+				bmpFile.seek(filePtr(x,srcY++));																		// Position the file pointer to the line of pixels we want.
+				drawLine(bmpFile,x,trace);																				// Standard old pixel by pixel draw. (Least it works.)
 			}
-			bmpFile.close();								// Drawing is done for now. Close the file.
+			bmpFile.close();																								// Drawing is done for now. Close the file.
 		}      
-	} else {													// Else we don't have info for this..
-		if (haveSourceRect) {
-			defRect.setRect(x,y,sourceRect.width,sourceRect.height);
-		} else {
-			defRect.setRect(x,y,32,32);
+	} else {																													// Else, we don't have info for this.. (What to do?)
+		if (haveSourceRect) {																							//	If we have a source rectangle..
+			defRect.setRect(x,y,sourceRect.width,sourceRect.height);											//	We use that to set our, err.. defRect. (Why its called this, I forgot.)
+		} else {																												// Else, we don't have a source rect..
+			defRect.setRect(x,y,32,32);																				//	So default to a 32x32 rect.
 		}
-		screen->fillRect(&defRect,&white);
-		screen->drawRect(&defRect,&red);
-		screen->drawLine(&defRect.getCorner(topLeftPt),&defRect.getCorner(bottomRightPt),&red);
-		screen->drawLine(&defRect.getCorner(topRightPt),&defRect.getCorner(bottomLeftPt),&red);
+		screen->fillRect(&defRect,&white);																			// We Basically draw a white rectangle.
+		screen->drawRect(&defRect,&red);																				// With a red border.
+		screen->drawLine(&defRect.getCorner(topLeftPt),&defRect.getCorner(bottomRightPt),&red);	// And a red cross. This shows that yes, we want something
+		screen->drawLine(&defRect.getCorner(topRightPt),&defRect.getCorner(bottomLeftPt),&red);	// here but no, we have no data.
 	}
 }
 
