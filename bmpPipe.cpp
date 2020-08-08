@@ -170,7 +170,8 @@ void bmpPipe::drawImage(int x,int y) {
 	int			endY;
 	int			srcY;
 	rect			defRect;
-
+	
+	
 	if (haveInfo) {																										// If we have valid bmp info..
 		bmpFile = SD.open(filePath);																					// Open up the file.
 		if (bmpFile) {																										// If we opened it.
