@@ -11,9 +11,10 @@
 // rect A on the card and spit it to rect B on the display.
 
 #include <SD.h>
+#include <baseGraphics.h>
+#include <colorObj.h>
 #include <drawObj.h>
 #include "screen.h"
-//#include "bitmap.h"
 
 class bmpPipe {
 
@@ -26,6 +27,7 @@ class bmpPipe {
 				void      		setSourceRect(rect* inRect);
 	virtual	void      		drawImage(int x,int y);
 				File				getFile(void);
+				void				getLine(RGBpack* inPack,int lineNum,int numPix=0);
 	virtual	void				drawLine(File bmpFile,int x,int y);
 				unsigned long	filePtr(int x,int y);
 				

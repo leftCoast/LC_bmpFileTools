@@ -38,14 +38,14 @@ bool bmpPipe::openPipe(char* filename) {
     			strcpy(filePath,filename);								// Save it off.
     			haveInfo = true;											// success!
     		}
-		if (haveInfo && !haveSourceRect) {  						// If we can..
-			aRect.x = 0;                      						// Default the source to the image.
-			aRect.y = 0;
-      	aRect.width = imageWidth;
-      	aRect.height = imageHeight;
-			setSourceRect(&aRect);
+			if (haveInfo && !haveSourceRect) {  					// If we can..
+				aRect.x = 0;                      					// Default the source to the image.
+				aRect.y = 0;
+				aRect.width = imageWidth;
+				aRect.height = imageHeight;
+				setSourceRect(&aRect);
+			}
 		}
-	}
 		bmpFile.close();												// Done, thanks!
 	}
 	return haveInfo;                     					// Tell the caller if it worked.
@@ -127,6 +127,33 @@ bool bmpPipe::readInfo(File bmpFile) {
     }
     return success;
   }
+
+
+// Hand in an array of RGBpack(s) and a line number this will fill them with that line of
+// color. CARFULL! This does NOT check if the buffer is large enough to fit the data. This
+// is YOUR responsibility. It will gladly blast junk into your RAM if not careful!
+void bmpPipe::getLine(RGBpack* inPack,int lineNum,int numPix) {
+	
+	File		bmpFile;
+	uint8_t	buf[COLOR_BUF_SIZE];   
+		
+	if (haveInfo) {												// If we have valid bmp info..
+		if (numPix<=0 || numPix>sourceRect.width) {		// If num pix is out of bounds..
+			numPix = sourceRect.width;							// We will default to the width of the image.
+		}
+		bmpFile = SD.open(filePath);							// Open up the file.
+		if (bmpFile) {												// If we opened it.
+			bmpFile.seek(filePtr(0,lineNum));				// Point the file at the head of our line.
+			for (int i=0;i<sourceRect.width; i++) {		// Ok, looping though all the pixels..
+				bmpFile.read(buf,pixBytes);					// Grab a pixel.
+				inPack[i].r = buf[2];							// Stuff the pack.
+				inPack[i].g = buf[1];
+				inPack[i].b = buf[0];
+			}
+			bmpFile.close();
+		}
+	}
+}
 
 
 // Your standard do it one at a time.
