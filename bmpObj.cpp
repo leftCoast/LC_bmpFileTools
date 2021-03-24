@@ -54,19 +54,27 @@ bool bmpObj::setImage(char* bmpPath) {
 
 void	bmpObj::drawSelf(void) {
 
+	File		bmpFile;
 	int		localY;
 	int		syMax;
 	colorObj	aColor;
+	char*		filePath;
 	
-	syMax = mSourceRect.y+mSourceRect.height;
-	localY = y;
-	for (int sourceY=mSourceRect.y;sourceY<syMax;sourceY++) {
-		mBMPObj->getRow(sourceY,mRowArray,mSourceRect.width,mSourceRect.x);
-		for (int i=0;i<mSourceRect.width;i++) {
-			aColor.setColor(&(mRowArray[i]));
-			
-			screen->drawPixel(x+i,localY,&aColor);
+	filePath = mBMPObj->getDocFilePath();
+	bmpFile = SD.open(filePath,FILE_READ);
+	if (bmpFile) {
+		mBMPObj->setGFile(&bmpFile);
+		syMax = mSourceRect.y+mSourceRect.height;
+		localY = y;
+		for (int sourceY=mSourceRect.y;sourceY<syMax;sourceY++) {
+			mBMPObj->getRow(sourceY,mRowArray,mSourceRect.width,mSourceRect.x);
+			for (int i=0;i<mSourceRect.width;i++) {
+				aColor.setColor(&(mRowArray[i]));
+				screen->drawPixel(x+i,localY,&aColor);
+			}
+			localY++;
 		}
-		localY++;
+		bmpFile.close();
+		mBMPObj->setGFile(NULL);
 	}
 }
